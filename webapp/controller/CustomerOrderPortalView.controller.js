@@ -417,7 +417,35 @@ sap.ui.define([
 		},
 		onProductSelected: function (oEvent) {
 
-		}
+		},
 
+		/**
+		 * Called when tab is selected
+		 * @param {sap.ui.base.Event} oEvent The tab selection event.
+		 */
+		onTabSelect: function (oEvent) {
+			var sKey = oEvent.getParameter("key");
+			// Add logic to load data or update the UI based on the selected tab
+			switch (sKey) {
+				case "dashboard":
+					// Load dashboard data
+					break;
+				case "myOrders":
+					// Load my orders data
+					break;
+				case "productCatalog":
+					// Load product catalog data
+					break;
+				case "shoppingCart":
+					// Load shopping cart data
+					break;
+				case "accountSettings":
+					// Load account settings data
+					break;
+				default:
+					break;
+			}
+			MessageToast.show("Tab '" + sKey + "' selected");
+		}
 	});
 });
