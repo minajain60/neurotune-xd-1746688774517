@@ -1,0 +1,1201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebDynpro xmlns="http://www.sap.com/wd/webdynpro">
+  <View name="CustomerOrderPortalView">
+    <Title>Customer Order Portal</Title>
+    <FlowLayout id="mainFlow" width="100%">
+      <HeaderBar id="headerBar" text="Customer Order Portal" subtext="Welcome, {/currentUser/displayName} - Customer ID: {/currentUser/customerId}" />
+      
+      <RowLayout id="notificationsRow">
+        <MessageArea id="notificationArea" width="100%">
+          <messages>
+            <message type="info" text="Our warehouse will be closed on April 15, 2025 for scheduled maintenance." />
+            <message type="success" text="New products added to catalog: High-Performance Materials Series X500." />
+            <message type="warning" text="Order #OR-78945 is delayed due to supply chain issues. Expected shipping: April 10, 2025." />
+          </messages>
+        </MessageArea>
+      </RowLayout>
+      
+      <RowLayout id="quickActionRow">
+        <Button text="Create New Order" design="EMPHASIZED" onAction="onCreateNewOrder" />
+        <Button text="View Order Status" onAction="onViewOrderStatus" />
+        <Button text="View Catalog" onAction="onViewCatalog" />
+        <Button text="Contact Support" onAction="onContactSupport" />
+        <Button text="Download Price List" onAction="onDownloadPriceList" />
+      </RowLayout>
+      
+      <TabStrip id="mainTabStrip" selectedIndex="0" width="100%">
+        <tab text="Dashboard">
+          <GridLayout id="dashboardGrid" width="100%">
+            <RowLayout id="dashboardStats">
+              <MatrixLayout id="statsMatrix" width="100%" columns="4" rows="1">
+                <MatrixHeadData>
+                  <TextView text="Open Orders" design="H3" />
+                  <TextView text="Recently Shipped" design="H3" />
+                  <TextView text="Total Orders YTD" design="H3" />
+                  <TextView text="Total Value YTD" design="H3" />
+                </MatrixHeadData>
+                <MatrixData>
+                  <TextView text="5" design="H2" textColor="#1E90FF" />
+                  <TextView text="12" design="H2" textColor="#32CD32" />
+                  <TextView text="87" design="H2" textColor="#1E90FF" />
+                  <TextView text="$345,789.00" design="H2" textColor="#1E90FF" />
+                </MatrixData>
+              </MatrixLayout>
+            </RowLayout>
+            
+            <RowLayout id="dashboardChartsRow">
+              <Chart id="ordersByMonthChart" type="COLUMN" width="48%" height="300px" title="Orders by Month">
+                <ChartAxes>
+                  <ChartAxis position="BOTTOM" title="Month" />
+                  <ChartAxis position="LEFT" title="Orders" />
+                </ChartAxes>
+                <ChartLegend position="TOP" />
+                <ChartSeries name="Current Year" color="#1E90FF" />
+                <ChartSeries name="Previous Year" color="#A9A9A9" />
+              </Chart>
+              <Chart id="ordersByProductChart" type="PIE" width="48%" height="300px" title="Orders by Product Category">
+                <ChartItems>
+                  <ChartItem name="Electronics" value="45" color="#1E90FF" />
+                  <ChartItem name="Office Supplies" value="20" color="#32CD32" />
+                  <ChartItem name="Furniture" value="15" color="#FFD700" />
+                  <ChartItem name="Services" value="10" color="#9370DB" />
+                  <ChartItem name="Other" value="10" color="#A9A9A9" />
+                </ChartItems>
+              </Chart>
+            </RowLayout>
+            
+            <RowLayout id="recentOrdersRow">
+              <Label text="Recent Orders" design="H3" />
+              <Table id="recentOrdersTable" selectionMode="SINGLE" width="100%">
+                <TableColumn id="orderIdColumn" width="120px">
+                  <TextView text="Order Number" design="STANDARD" />
+                  <TextView text="{/orderId}" />
+                </TableColumn>
+                <TableColumn id="orderDateColumn" width="120px">
+                  <TextView text="Order Date" design="STANDARD" />
+                  <TextView text="{/orderDate}" />
+                </TableColumn>
+                <TableColumn id="orderValueColumn" width="120px">
+                  <TextView text="Value" design="STANDARD" />
+                  <TextView text="{/orderValue}" />
+                </TableColumn>
+                <TableColumn id="orderItemsColumn" width="80px">
+                  <TextView text="Items" design="STANDARD" />
+                  <TextView text="{/itemCount}" />
+                </TableColumn>
+                <TableColumn id="orderStatusColumn" width="120px">
+                  <TextView text="Status" design="STANDARD" />
+                  <StatusIndicator value="{/statusCode}" text="{/status}" />
+                </TableColumn>
+                <TableColumn id="shipmentDateColumn" width="120px">
+                  <TextView text="Shipment Date" design="STANDARD" />
+                  <TextView text="{/shipmentDate}" />
+                </TableColumn>
+                <TableColumn id="orderActionsColumn" width="160px">
+                  <TextView text="Actions" design="STANDARD" />
+                  <FlowLayout>
+                    <Button text="Details" onAction="onViewOrderDetails" />
+                    <Button text="Track" onAction="onTrackOrder" />
+                  </FlowLayout>
+                </TableColumn>
+              </Table>
+            </RowLayout>
+            
+            <RowLayout id="favoriteProductsRow">
+              <Label text="Favorite Products" design="H3" />
+              <Table id="favoriteProductsTable" selectionMode="SINGLE" width="100%">
+                <TableColumn id="productIdColumn" width="120px">
+                  <TextView text="Product ID" design="STANDARD" />
+                  <TextView text="{/productId}" />
+                </TableColumn>
+                <TableColumn id="productDescColumn">
+                  <TextView text="Description" design="STANDARD" />
+                  <TextView text="{/description}" />
+                </TableColumn>
+                <TableColumn id="productCategoryColumn" width="120px">
+                  <TextView text="Category" design="STANDARD" />
+                  <TextView text="{/category}" />
+                </TableColumn>
+                <TableColumn id="productPriceColumn" width="120px">
+                  <TextView text="Unit Price" design="STANDARD" />
+                  <TextView text="{/price}" />
+                </TableColumn>
+                <TableColumn id="productAvailabilityColumn" width="120px">
+                  <TextView text="Availability" design="STANDARD" />
+                  <StatusIndicator value="{/availabilityCode}" text="{/availability}" />
+                </TableColumn>
+                <TableColumn id="productActionsColumn" width="160px">
+                  <TextView text="Actions" design="STANDARD" />
+                  <FlowLayout>
+                    <Button text="Add to Cart" onAction="onAddToCart" />
+                    <Button text="Details" onAction="onViewProductDetails" />
+                  </FlowLayout>
+                </TableColumn>
+              </Table>
+            </RowLayout>
+          </GridLayout>
+        </tab>
+        
+        <tab text="My Orders">
+          <GridLayout id="ordersGrid" width="100%">
+            <RowLayout id="ordersFilterRow">
+              <Label text="Status:" />
+              <DropDownByKey id="orderStatusFilter" selectedKey="ALL">
+                <item key="ALL" text="All Statuses" />
+                <item key="DRAFT" text="Draft" />
+                <item key="SUBMITTED" text="Submitted" />
+                <item key="PROCESSING" text="Processing" />
+                <item key="SHIPPED" text="Shipped" />
+                <item key="DELIVERED" text="Delivered" />
+                <item key="CANCELLED" text="Cancelled" />
+                <item key="RETURNED" text="Returned" />
+              </DropDownByKey>
+              <Label text="Date Range:" />
+              <DateNavigator id="orderStartDate" />
+              <TextView text="to" />
+              <DateNavigator id="orderEndDate" />
+              <Label text="Search:" />
+              <InputField id="orderSearchField" placeholder="Enter order number or product..." />
+              <Button text="Apply Filters" onAction="onApplyOrderFilters" />
+              <Button text="Reset" onAction="onResetOrderFilters" />
+            </RowLayout>
+            
+            <RowLayout id="ordersTableRow">
+              <Table id="ordersTable" selectionMode="SINGLE" width="100%" onSelectionChange="onOrderSelected">
+                <TableColumn id="fullOrderIdColumn" width="120px">
+                  <TextView text="Order Number" design="STANDARD" />
+                  <TextView text="{/orderId}" />
+                </TableColumn>
+                <TableColumn id="fullOrderDateColumn" width="120px">
+                  <TextView text="Order Date" design="STANDARD" />
+                  <TextView text="{/orderDate}" />
+                </TableColumn>
+                <TableColumn id="poNumberColumn" width="120px">
+                  <TextView text="PO Number" design="STANDARD" />
+                  <TextView text="{/poNumber}" />
+                </TableColumn>
+                <TableColumn id="fullOrderValueColumn" width="120px">
+                  <TextView text="Total Value" design="STANDARD" />
+                  <TextView text="{/totalValue}" />
+                </TableColumn>
+                <TableColumn id="fullOrderItemsColumn" width="80px">
+                  <TextView text="Items" design="STANDARD" />
+                  <TextView text="{/itemCount}" />
+                </TableColumn>
+                <TableColumn id="currencyColumn" width="80px">
+                  <TextView text="Currency" design="STANDARD" />
+                  <TextView text="{/currency}" />
+                </TableColumn>
+                <TableColumn id="deliveryMethodColumn" width="120px">
+                  <TextView text="Delivery Method" design="STANDARD" />
+                  <TextView text="{/deliveryMethod}" />
+                </TableColumn>
+                <TableColumn id="fullOrderStatusColumn" width="120px">
+                  <TextView text="Status" design="STANDARD" />
+                  <StatusIndicator value="{/statusCode}" text="{/status}" />
+                </TableColumn>
+                <TableColumn id="fullShipmentDateColumn" width="120px">
+                  <TextView text="Shipment Date" design="STANDARD" />
+                  <TextView text="{/shipmentDate}" />
+                </TableColumn>
+                <TableColumn id="fullOrderActionsColumn" width="160px">
+                  <TextView text="Actions" design="STANDARD" />
+                  <FlowLayout>
+                    <Button text="Details" onAction="onViewFullOrderDetails" />
+                    <Button text="Track" onAction="onTrackFullOrder" />
+                    <Button text="Cancel" onAction="onCancelOrder" visible="{/canCancel}" />
+                  </FlowLayout>
+                </TableColumn>
+              </Table>
+            </RowLayout>
+            
+            <Tray id="orderDetailsTray" caption="Order Details" isOpen="false" width="100%">
+              <TabStrip id="orderDetailsTabStrip" selectedIndex="0" width="100%">
+                <tab text="General Information">
+                  <MatrixLayout id="orderDetailsMatrix" width="100%" columns="2" rows="1">
+                    <MatrixHeadData>
+                      <EmptyCell />
+                      <EmptyCell />
+                    </MatrixHeadData>
+                    <MatrixData>
+                      <FormContainer id="orderDetailsForm">
+                        <FormElement label="Order Number:">
+                          <TextView text="{/selectedOrder/orderId}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Order Date:">
+                          <TextView text="{/selectedOrder/orderDate}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="PO Number:">
+                          <TextView text="{/selectedOrder/poNumber}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Order Source:">
+                          <TextView text="{/selectedOrder/orderSource}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Requested Delivery Date:">
+                          <TextView text="{/selectedOrder/requestedDeliveryDate}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Delivery Method:">
+                          <TextView text="{/selectedOrder/deliveryMethod}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Payment Method:">
+                          <TextView text="{/selectedOrder/paymentMethod}" design="STANDARD" />
+                        </FormElement>
+                      </FormContainer>
+                      
+                      <FormContainer id="orderStatusForm">
+                        <FormElement label="Status:">
+                          <StatusIndicator value="{/selectedOrder/statusCode}" text="{/selectedOrder/status}" />
+                        </FormElement>
+                        <FormElement label="Confirmation Date:">
+                          <TextView text="{/selectedOrder/confirmationDate}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Shipment Date:">
+                          <TextView text="{/selectedOrder/shipmentDate}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Tracking Number:">
+                          <TextView text="{/selectedOrder/trackingNumber}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Carrier:">
+                          <TextView text="{/selectedOrder/carrier}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Delivery Date:">
+                          <TextView text="{/selectedOrder/deliveryDate}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Notes:">
+                          <TextArea id="orderNotes" value="{/selectedOrder/notes}" rows="3" editable="{/selectedOrder/canEditNotes}" />
+                        </FormElement>
+                      </FormContainer>
+                    </MatrixData>
+                  </MatrixLayout>
+                </tab>
+                
+                <tab text="Order Items">
+                  <RowLayout id="orderItemsRow">
+                    <Table id="orderItemsTable" selectionMode="NONE" width="100%">
+                      <TableColumn id="lineItemColumn" width="80px">
+                        <TextView text="Line Item" design="STANDARD" />
+                        <TextView text="{/lineItem}" />
+                      </TableColumn>
+                      <TableColumn id="itemProductIdColumn" width="120px">
+                        <TextView text="Product ID" design="STANDARD" />
+                        <TextView text="{/productId}" />
+                      </TableColumn>
+                      <TableColumn id="itemDescriptionColumn">
+                        <TextView text="Description" design="STANDARD" />
+                        <TextView text="{/description}" />
+                      </TableColumn>
+                      <TableColumn id="itemQuantityColumn" width="80px">
+                        <TextView text="Quantity" design="STANDARD" />
+                        <TextView text="{/quantity}" />
+                      </TableColumn>
+                      <TableColumn id="itemUomColumn" width="80px">
+                        <TextView text="UoM" design="STANDARD" />
+                        <TextView text="{/uom}" />
+                      </TableColumn>
+                      <TableColumn id="itemPriceColumn" width="100px">
+                        <TextView text="Unit Price" design="STANDARD" />
+                        <TextView text="{/unitPrice}" />
+                      </TableColumn>
+                      <TableColumn id="itemValueColumn" width="120px">
+                        <TextView text="Value" design="STANDARD" />
+                        <TextView text="{/value}" />
+                      </TableColumn>
+                      <TableColumn id="itemDiscountColumn" width="80px">
+                        <TextView text="Discount" design="STANDARD" />
+                        <TextView text="{/discount}" />
+                      </TableColumn>
+                      <TableColumn id="itemNetValueColumn" width="120px">
+                        <TextView text="Net Value" design="STANDARD" />
+                        <TextView text="{/netValue}" />
+                      </TableColumn>
+                      <TableColumn id="itemStatusColumn" width="120px">
+                        <TextView text="Status" design="STANDARD" />
+                        <StatusIndicator value="{/statusCode}" text="{/status}" />
+                      </TableColumn>
+                    </Table>
+                  </RowLayout>
+                  
+                  <RowLayout id="orderSummaryRow">
+                    <FormContainer id="orderSummaryForm" title="Order Summary">
+                      <FormElement label="Total Items:">
+                        <TextView text="{/selectedOrder/totalItems}" design="STANDARD" />
+                      </FormElement>
+                      <FormElement label="Subtotal:">
+                        <TextView text="{/selectedOrder/subtotal}" design="STANDARD" />
+                      </FormElement>
+                      <FormElement label="Discount:">
+                        <TextView text="{/selectedOrder/totalDiscount}" design="STANDARD" />
+                      </FormElement>
+                      <FormElement label="Tax:">
+                        <TextView text="{/selectedOrder/tax}" design="STANDARD" />
+                      </FormElement>
+                      <FormElement label="Shipping:">
+                        <TextView text="{/selectedOrder/shipping}" design="STANDARD" />
+                      </FormElement>
+                      <FormElement label="Total:">
+                        <TextView text="{/selectedOrder/total}" design="BOLD" textColor="#0000FF" />
+                      </FormElement>
+                      <FormElement label="Currency:">
+                        <TextView text="{/selectedOrder/currency}" design="STANDARD" />
+                      </FormElement>
+                    </FormContainer>
+                  </RowLayout>
+                </tab>
+                
+                <tab text="Shipping & Delivery">
+                  <MatrixLayout id="shippingMatrix" width="100%" columns="2" rows="1">
+                    <MatrixHeadData>
+                      <EmptyCell />
+                      <EmptyCell />
+                    </MatrixHeadData>
+                    <MatrixData>
+                      <FormContainer id="shippingAddressForm" title="Shipping Address">
+                        <FormElement label="Contact Name:">
+                          <TextView text="{/selectedOrder/shipping/contactName}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Company:">
+                          <TextView text="{/selectedOrder/shipping/company}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Street:">
+                          <TextView text="{/selectedOrder/shipping/street}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="City:">
+                          <TextView text="{/selectedOrder/shipping/city}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="State/Province:">
+                          <TextView text="{/selectedOrder/shipping/state}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Postal Code:">
+                          <TextView text="{/selectedOrder/shipping/postalCode}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Country:">
+                          <TextView text="{/selectedOrder/shipping/country}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Phone:">
+                          <TextView text="{/selectedOrder/shipping/phone}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Email:">
+                          <TextView text="{/selectedOrder/shipping/email}" design="STANDARD" />
+                        </FormElement>
+                      </FormContainer>
+                      
+                      <FormContainer id="deliveryDetailsForm" title="Delivery Details">
+                        <FormElement label="Delivery Method:">
+                          <TextView text="{/selectedOrder/deliveryMethod}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Carrier:">
+                          <TextView text="{/selectedOrder/carrier}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Tracking Number:">
+                          <TextView text="{/selectedOrder/trackingNumber}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Track Order:">
+                          <Button text="Track Shipment" onAction="onTrackShipment" />
+                        </FormElement>
+                        <FormElement label="Estimated Delivery:">
+                          <TextView text="{/selectedOrder/estimatedDelivery}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Special Instructions:">
+                          <TextView text="{/selectedOrder/specialInstructions}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Status:">
+                          <StatusIndicator value="{/selectedOrder/deliveryStatusCode}" text="{/selectedOrder/deliveryStatus}" />
+                        </FormElement>
+                      </FormContainer>
+                    </MatrixData>
+                  </MatrixLayout>
+                  
+                  <RowLayout id="deliveryTrackingRow">
+                    <Label text="Shipment Progress" design="H3" />
+                    <RoadMap id="shipmentRoadmap" selectedStep="{/selectedOrder/currentShipmentStep}">
+                      <steps>
+                        <step id="step1" title="Order Confirmed" />
+                        <step id="step2" title="Processing" />
+                        <step id="step3" title="Ready for Shipment" />
+                        <step id="step4" title="Shipped" />
+                        <step id="step5" title="In Transit" />
+                        <step id="step6" title="Out for Delivery" />
+                        <step id="step7" title="Delivered" />
+                      </steps>
+                    </RoadMap>
+                  </RowLayout>
+                  
+                  <RowLayout id="shipmentUpdatesRow">
+                    <Label text="Shipment Updates" design="H3" />
+                    <Table id="shipmentUpdatesTable" selectionMode="NONE" width="100%">
+                      <TableColumn id="updateDateColumn" width="120px">
+                        <TextView text="Date" design="STANDARD" />
+                        <TextView text="{/date}" />
+                      </TableColumn>
+                      <TableColumn id="updateTimeColumn" width="80px">
+                        <TextView text="Time" design="STANDARD" />
+                        <TextView text="{/time}" />
+                      </TableColumn>
+                      <TableColumn id="updateLocationColumn" width="160px">
+                        <TextView text="Location" design="STANDARD" />
+                        <TextView text="{/location}" />
+                      </TableColumn>
+                      <TableColumn id="updateStatusColumn" width="120px">
+                        <TextView text="Status" design="STANDARD" />
+                        <TextView text="{/status}" />
+                      </TableColumn>
+                      <TableColumn id="updateDescriptionColumn">
+                        <TextView text="Description" design="STANDARD" />
+                        <TextView text="{/description}" />
+                      </TableColumn>
+                    </Table>
+                  </RowLayout>
+                </tab>
+                
+                <tab text="Billing & Payment">
+                  <MatrixLayout id="billingMatrix" width="100%" columns="2" rows="1">
+                    <MatrixHeadData>
+                      <EmptyCell />
+                      <EmptyCell />
+                    </MatrixHeadData>
+                    <MatrixData>
+                      <FormContainer id="billingAddressForm" title="Billing Address">
+                        <FormElement label="Contact Name:">
+                          <TextView text="{/selectedOrder/billing/contactName}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Company:">
+                          <TextView text="{/selectedOrder/billing/company}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Street:">
+                          <TextView text="{/selectedOrder/billing/street}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="City:">
+                          <TextView text="{/selectedOrder/billing/city}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="State/Province:">
+                          <TextView text="{/selectedOrder/billing/state}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Postal Code:">
+                          <TextView text="{/selectedOrder/billing/postalCode}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Country:">
+                          <TextView text="{/selectedOrder/billing/country}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Phone:">
+                          <TextView text="{/selectedOrder/billing/phone}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Email:">
+                          <TextView text="{/selectedOrder/billing/email}" design="STANDARD" />
+                        </FormElement>
+                      </FormContainer>
+                      
+                      <FormContainer id="paymentDetailsForm" title="Payment Details">
+                        <FormElement label="Payment Method:">
+                          <TextView text="{/selectedOrder/paymentMethod}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Payment Terms:">
+                          <TextView text="{/selectedOrder/paymentTerms}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Invoice Number:">
+                          <TextView text="{/selectedOrder/invoiceNumber}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Invoice Date:">
+                          <TextView text="{/selectedOrder/invoiceDate}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Due Date:">
+                          <TextView text="{/selectedOrder/dueDate}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Payment Status:">
+                          <StatusIndicator value="{/selectedOrder/paymentStatusCode}" text="{/selectedOrder/paymentStatus}" />
+                        </FormElement>
+                        <FormElement label="View Invoice:">
+                          <Button text="View Invoice" onAction="onViewInvoice" />
+                        </FormElement>
+                      </FormContainer>
+                    </MatrixData>
+                  </MatrixLayout>
+                </tab>
+                
+                <tab text="Documents">
+                  <RowLayout id="documentsRow">
+                    <Table id="documentsTable" selectionMode="SINGLE" width="100%">
+                      <TableColumn id="docTypeColumn" width="120px">
+                        <TextView text="Document Type" design="STANDARD" />
+                        <TextView text="{/type}" />
+                      </TableColumn>
+                      <TableColumn id="docNumberColumn" width="120px">
+                        <TextView text="Document Number" design="STANDARD" />
+                        <TextView text="{/number}" />
+                      </TableColumn>
+                      <TableColumn id="docDescriptionColumn">
+                        <TextView text="Description" design="STANDARD" />
+                        <TextView text="{/description}" />
+                      </TableColumn>
+                      <TableColumn id="docDateColumn" width="120px">
+                        <TextView text="Date" design="STANDARD" />
+                        <TextView text="{/date}" />
+                      </TableColumn>
+                      <TableColumn id="docActionsColumn" width="200px">
+                        <TextView text="Actions" design="STANDARD" />
+                        <FlowLayout>
+                          <Button text="View" onAction="onViewDocument" />
+                          <Button text="Download" onAction="onDownloadDocument" />
+                          <Button text="Print" onAction="onPrintDocument" />
+                        </FlowLayout>
+                      </TableColumn>
+                    </Table>
+                  </RowLayout>
+                </tab>
+              </TabStrip>
+            </Tray>
+          </GridLayout>
+        </tab>
+        
+        <tab text="Product Catalog">
+          <GridLayout id="catalogGrid" width="100%">
+            <RowLayout id="catalogFilterRow">
+              <Label text="Category:" />
+              <DropDownByKey id="categoryFilter" selectedKey="ALL">
+                <item key="ALL" text="All Categories" />
+                <item key="ELECTRONICS" text="Electronics" />
+                <item key="OFFICE" text="Office Supplies" />
+                <item key="FURNITURE" text="Furniture" />
+                <item key="SERVICES" text="Services" />
+                <item key="OTHER" text="Other" />
+              </DropDownByKey>
+              <Label text="Availability:" />
+              <DropDownByKey id="availabilityFilter" selectedKey="ALL">
+                <item key="ALL" text="All" />
+                <item key="IN_STOCK" text="In Stock" />
+                <item key="LIMITED" text="Limited Stock" />
+                <item key="OUT_OF_STOCK" text="Out of Stock" />
+                <item key="DISCONTINUED" text="Discontinued" />
+              </DropDownByKey>
+              <Label text="Search:" />
+              <InputField id="productSearchField" placeholder="Enter product ID or description..." />
+              <Button text="Apply Filters" onAction="onApplyCatalogFilters" />
+              <Button text="Reset" onAction="onResetCatalogFilters" />
+              <Button text="Advanced Search" onAction="onAdvancedProductSearch" />
+            </RowLayout>
+            
+            <RowLayout id="catalogTableRow">
+              <Table id="catalogTable" selectionMode="SINGLE" width="100%" onSelectionChange="onProductSelected">
+                <TableColumn id="catalogProductIdColumn" width="120px">
+                  <TextView text="Product ID" design="STANDARD" />
+                  <TextView text="{/productId}" />
+                </TableColumn>
+                <TableColumn id="catalogProductDescColumn">
+                  <TextView text="Description" design="STANDARD" />
+                  <TextView text="{/description}" />
+                </TableColumn>
+                <TableColumn id="catalogProductCategoryColumn" width="120px">
+                  <TextView text="Category" design="STANDARD" />
+                  <TextView text="{/category}" />
+                </TableColumn>
+                <TableColumn id="catalogProductUomColumn" width="80px">
+                  <TextView text="UoM" design="STANDARD" />
+                  <TextView text="{/uom}" />
+                </TableColumn>
+                <TableColumn id="catalogProductPriceColumn" width="120px">
+                  <TextView text="Unit Price" design="STANDARD" />
+                  <TextView text="{/price}" />
+                </TableColumn>
+                <TableColumn id="catalogProductLeadTimeColumn" width="100px">
+                  <TextView text="Lead Time" design="STANDARD" />
+                  <TextView text="{/leadTime}" />
+                </TableColumn>
+                <TableColumn id="catalogProductAvailabilityColumn" width="120px">
+                  <TextView text="Availability" design="STANDARD" />
+                  <StatusIndicator value="{/availabilityCode}" text="{/availability}" />
+                </TableColumn>
+                <TableColumn id="catalogProductActionsColumn" width="180px">
+                  <TextView text="Actions" design="STANDARD" />
+                  <FlowLayout>
+                    <Button text="Add to Cart" onAction="onAddProductToCart" />
+                    <Button text="Details" onAction="onViewProductDetails" />
+                    <Button text="Favorite" onAction="onAddToFavorites" design="STANDARD" />
+                  </FlowLayout>
+                </TableColumn>
+              </Table>
+            </RowLayout>
+            
+            <Tray id="productDetailsTray" caption="Product Details" isOpen="false" width="100%">
+              <TabStrip id="productDetailsTabStrip" selectedIndex="0" width="100%">
+                <tab text="General Information">
+                  <MatrixLayout id="productDetailsMatrix" width="100%" columns="2" rows="1">
+                    <MatrixHeadData>
+                      <EmptyCell />
+                      <EmptyCell />
+                    </MatrixHeadData>
+                    <MatrixData>
+                      <PhotoControl id="productImage" photoSource="{/selectedProduct/imageUrl}" width="300px" height="300px" />
+                      
+                      <FormContainer id="productDetailsForm">
+                        <FormElement label="Product ID:">
+                          <TextView text="{/selectedProduct/productId}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Description:">
+                          <TextView text="{/selectedProduct/description}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Long Description:">
+                          <TextArea id="longDescription" value="{/selectedProduct/longDescription}" rows="4" editable="false" />
+                        </FormElement>
+                        <FormElement label="Category:">
+                          <TextView text="{/selectedProduct/category}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Unit of Measure:">
+                          <TextView text="{/selectedProduct/uom}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Unit Price:">
+                          <TextView text="{/selectedProduct/price}" design="BOLD" textColor="#0000FF" />
+                        </FormElement>
+                        <FormElement label="Availability:">
+                          <StatusIndicator value="{/selectedProduct/availabilityCode}" text="{/selectedProduct/availability}" />
+                        </FormElement>
+                        <FormElement label="Lead Time:">
+                          <TextView text="{/selectedProduct/leadTime}" design="STANDARD" />
+                        </FormElement>
+                        <FormElement label="Quantity:">
+                          <InputField id="orderQuantity" value="{/orderQuantity}" />
+                        </FormElement>
+                        <FormElement label="Add to Cart:">
+                          <Button text="Add to Cart" onAction="onAddSelectedProductToCart" design="EMPHASIZED" />
+                        </FormElement>
+                      </FormContainer>
+                    </MatrixData>
+                  </MatrixLayout>
+                </tab>
+                
+                <tab text="Technical Specifications">
+                  <Table id="specificationsTable" selectionMode="NONE" width="100%">
+                    <TableColumn id="specAttributeColumn" width="200px">
+                      <TextView text="Attribute" design="STANDARD" />
+                      <TextView text="{/attribute}" />
+                    </TableColumn>
+                    <TableColumn id="specValueColumn">
+                      <TextView text="Value" design="STANDARD" />
+                      <TextView text="{/value}" />
+                    </TableColumn>
+                    <TableColumn id="specUnitColumn" width="100px">
+                      <TextView text="Unit" design="STANDARD" />
+                      <TextView text="{/unit}" />
+                    </TableColumn>
+                  </Table>
+                </tab>
+                
+                <tab text="Pricing & Discounts">
+                  <FormContainer id="pricingForm">
+                    <FormElement label="List Price:">
+                      <TextView text="{/selectedProduct/listPrice}" design="STANDARD" />
+                    </FormElement>
+                    <FormElement label="Your Price:">
+                      <TextView text="{/selectedProduct/customerPrice}" design="BOLD" textColor="#0000FF" />
+                    </FormElement>
+                    <FormElement label="Savings:">
+                      <TextView text="{/selectedProduct/savings} ({/selectedProduct/savingsPercentage}%)" design="STANDARD" textColor="#00AA00" />
+                    </FormElement>
+                    <FormElement label="Currency:">
+                      <TextView text="{/selectedProduct/currency}" design="STANDARD" />
+                    </FormElement>
+                    <FormElement label="Minimum Order Quantity:">
+                      <TextView text="{/selectedProduct/minOrderQuantity}" design="STANDARD" />
+                    </FormElement>
+                    <FormElement label="Price Valid Until:">
+                      <TextView text="{/selectedProduct/priceValidUntil}" design="STANDARD" />
+                    </FormElement>
+                  </FormContainer>
+                  
+                  <Label text="Volume Discounts" design="H3" />
+                  <Table id="volumeDiscountsTable" selectionMode="NONE" width="100%">
+                    <TableColumn id="discountQuantityColumn" width="120px">
+                      <TextView text="Quantity" design="STANDARD" />
+                      <TextView text="{/quantity}" />
+                    </TableColumn>
+                    <TableColumn id="discountPriceColumn" width="120px">
+                      <TextView text="Unit Price" design="STANDARD" />
+                      <TextView text="{/unitPrice}" />
+                    </TableColumn>
+                    <TableColumn id="discountPercentageColumn" width="120px">
+                      <TextView text="Discount %" design="STANDARD" />
+                      <TextView text="{/discountPercentage}%" />
+                    </TableColumn>
+                    <TableColumn id="discountSavingsColumn">
+                      <TextView text="Savings" design="STANDARD" />
+                      <TextView text="{/savings}" textColor="#00AA00" />
+                    </TableColumn>
+                  </Table>
+                </tab>
+                
+                <tab text="Alternatives">
+                  <Table id="alternativesTable" selectionMode="SINGLE" width="100%">
+                    <TableColumn id="altProductIdColumn" width="120px">
+                      <TextView text="Product ID" design="STANDARD" />
+                      <TextView text="{/productId}" />
+                    </TableColumn>
+                    <TableColumn id="altDescriptionColumn">
+                      <TextView text="Description" design="STANDARD" />
+                      <TextView text="{/description}" />
+                    </TableColumn>
+                    <TableColumn id="altPriceColumn" width="120px">
+                      <TextView text="Unit Price" design="STANDARD" />
+                      <TextView text="{/price}" />
+                    </TableColumn>
+                    <TableColumn id="altAvailabilityColumn" width="120px">
+                      <TextView text="Availability" design="STANDARD" />
+                      <StatusIndicator value="{/availabilityCode}" text="{/availability}" />
+                    </TableColumn>
+                    <TableColumn id="altComparisonColumn">
+                      <TextView text="Comparison" design="STANDARD" />
+                      <TextView text="{/comparison}" />
+                    </TableColumn>
+                    <TableColumn id="altActionsColumn" width="160px">
+                      <TextView text="Actions" design="STANDARD" />
+                      <FlowLayout>
+                        <Button text="Details" onAction="onViewAlternativeDetails" />
+                        <Button text="Add to Cart" onAction="onAddAlternativeToCart" />
+                      </FlowLayout>
+                    </TableColumn>
+                  </Table>
+                </tab>
+                
+                <tab text="Documentation">
+                  <Table id="productDocumentsTable" selectionMode="SINGLE" width="100%">
+                    <TableColumn id="docNameColumn">
+                      <TextView text="Document Name" design="STANDARD" />
+                      <TextView text="{/name}" />
+                    </TableColumn>
+                    <TableColumn id="docDescriptionColumn">
+                      <TextView text="Description" design="STANDARD" />
+                      <TextView text="{/description}" />
+                    </TableColumn>
+                    <TableColumn id="docTypeColumn" width="120px">
+                      <TextView text="Type" design="STANDARD" />
+                      <TextView text="{/type}" />
+                    </TableColumn>
+                    <TableColumn id="docLanguageColumn" width="100px">
+                      <TextView text="Language" design="STANDARD" />
+                      <TextView text="{/language}" />
+                    </TableColumn>
+                    <TableColumn id="docActionsColumn" width="200px">
+                      <TextView text="Actions" design="STANDARD" />
+                      <FlowLayout>
+                        <Button text="View" onAction="onViewProductDocument" />
+                        <Button text="Download" onAction="onDownloadProductDocument" />
+                      </FlowLayout>
+                    </TableColumn>
+                  </Table>
+                </tab>
+              </TabStrip>
+            </Tray>
+          </GridLayout>
+        </tab>
+        
+        <tab text="Shopping Cart">
+          <GridLayout id="cartGrid" width="100%">
+            <RowLayout id="cartTableRow">
+              <Table id="cartTable" selectionMode="MULTI_SELECTION" width="100%">
+                <TableColumn id="cartProductIdColumn" width="120px">
+                  <TextView text="Product ID" design="STANDARD" />
+                  <TextView text="{/productId}" />
+                </TableColumn>
+                <TableColumn id="cartDescriptionColumn">
+                  <TextView text="Description" design="STANDARD" />
+                  <TextView text="{/description}" />
+                </TableColumn>
+                <TableColumn id="cartQuantityColumn" width="120px">
+                  <TextView text="Quantity" design="STANDARD" />
+                  <InputField id="cartQuantity" value="{/quantity}" onAction="onUpdateCartQuantity" />
+                </TableColumn>
+                <TableColumn id="cartUomColumn" width="80px">
+                  <TextView text="UoM" design="STANDARD" />
+                  <TextView text="{/uom}" />
+                </TableColumn>
+                <TableColumn id="cartUnitPriceColumn" width="120px">
+                  <TextView text="Unit Price" design="STANDARD" />
+                  <TextView text="{/unitPrice}" />
+                </TableColumn>
+                <TableColumn id="cartValueColumn" width="120px">
+                  <TextView text="Value" design="STANDARD" />
+                  <TextView text="{/value}" />
+                </TableColumn>
+                <TableColumn id="cartAvailabilityColumn" width="120px">
+                  <TextView text="Availability" design="STANDARD" />
+                  <StatusIndicator value="{/availabilityCode}" text="{/availability}" />
+                </TableColumn>
+                <TableColumn id="cartActionsColumn" width="120px">
+                  <TextView text="Actions" design="STANDARD" />
+                  <FlowLayout>
+                    <LinkToAction text="Remove" onAction="onRemoveCartItem" />
+                    <TextView text=" | " />
+                    <LinkToAction text="Details" onAction="onViewCartItemDetails" />
+                  </FlowLayout>
+                </TableColumn>
+              </Table>
+            </RowLayout>
+            
+            <RowLayout id="cartSummaryRow">
+              <FormContainer id="cartSummaryForm" title="Order Summary">
+                <FormElement label="Total Items:">
+                  <TextView text="{/cart/totalItems}" design="STANDARD" />
+                </FormElement>
+                <FormElement label="Subtotal:">
+                  <TextView text="{/cart/subtotal}" design="STANDARD" />
+                </FormElement>
+                <FormElement label="Estimated Shipping:">
+                  <TextView text="{/cart/shipping}" design="STANDARD" />
+                </FormElement>
+                <FormElement label="Estimated Tax:">
+                  <TextView text="{/cart/tax}" design="STANDARD" />
+                </FormElement>
+                <FormElement label="Total:">
+                  <TextView text="{/cart/total}" design="BOLD" textColor="#0000FF" />
+                </FormElement>
+                <FormElement label="Currency:">
+                  <TextView text="{/cart/currency}" design="STANDARD" />
+                </FormElement>
+              </FormContainer>
+            </RowLayout>
+            
+            <RowLayout id="cartButtonsRow">
+              <Button text="Continue Shopping" onAction="onContinueShopping" />
+              <Button text="Update Cart" onAction="onUpdateCart" />
+              <Button text="Clear Cart" onAction="onClearCart" />
+              <Button text="Proceed to Checkout" design="EMPHASIZED" onAction="onProceedToCheckout" />
+            </RowLayout>
+          </GridLayout>
+        </tab>
+        
+        <tab text="Account Settings">
+          <TabStrip id="accountTabStrip" selectedIndex="0" width="100%">
+            <tab text="Profile">
+              <FormContainer id="profileForm">
+                <FormElement label="Customer ID:">
+                  <TextView text="{/currentUser/customerId}" design="STANDARD" />
+                </FormElement>
+                <FormElement label="Company:">
+                  <InputField id="companyName" value="{/currentUser/company}" />
+                </FormElement>
+                <FormElement label="Contact Person:">
+                  <InputField id="contactPerson" value="{/currentUser/contactPerson}" />
+                </FormElement>
+                <FormElement label="Email:">
+                  <InputField id="email" value="{/currentUser/email}" />
+                </FormElement>
+                <FormElement label="Phone:">
+                  <InputField id="phone" value="{/currentUser/phone}" />
+                </FormElement>
+                <FormElement label="Fax:">
+                  <InputField id="fax" value="{/currentUser/fax}" />
+                </FormElement>
+                <FormElement label="Customer Type:">
+                  <TextView text="{/currentUser/customerType}" design="STANDARD" />
+                </FormElement>
+                <FormElement label="Customer Group:">
+                  <TextView text="{/currentUser/customerGroup}" design="STANDARD" />
+                </FormElement>
+                <FormElement label="Account Manager:">
+                  <TextView text="{/currentUser/accountManager}" design="STANDARD" />
+                </FormElement>
+                <FormElement label="Account Notes:">
+                  <TextArea id="accountNotes" value="{/currentUser/accountNotes}" rows="4" />
+                </FormElement>
+              </FormContainer>
+              <ButtonRow id="profileButtonsRow">
+                <Button text="Save Changes" design="EMPHASIZED" onAction="onSaveProfileChanges" />
+                <Button text="Change Password" onAction="onChangePassword" />
+              </ButtonRow>
+            </tab>
+            
+            <tab text="Addresses">
+              <RowLayout id="addressesTableRow">
+                <Table id="addressesTable" selectionMode="SINGLE" width="100%">
+                  <TableColumn id="addressTypeColumn" width="120px">
+                    <TextView text="Type" design="STANDARD" />
+                    <TextView text="{/type}" />
+                  </TableColumn>
+                  <TableColumn id="addressNameColumn" width="120px">
+                    <TextView text="Name" design="STANDARD" />
+                    <TextView text="{/name}" />
+                  </TableColumn>
+                  <TableColumn id="addressCompanyColumn" width="160px">
+                    <TextView text="Company" design="STANDARD" />
+                    <TextView text="{/company}" />
+                  </TableColumn>
+                  <TableColumn id="addressStreetColumn">
+                    <TextView text="Street" design="STANDARD" />
+                    <TextView text="{/street}" />
+                  </TableColumn>
+                  <TableColumn id="addressCityColumn" width="120px">
+                    <TextView text="City" design="STANDARD" />
+                    <TextView text="{/city}" />
+                  </TableColumn>
+                  <TableColumn id="addressStateColumn" width="100px">
+                    <TextView text="State/Province" design="STANDARD" />
+                    <TextView text="{/state}" />
+                  </TableColumn>
+                  <TableColumn id="addressPostalCodeColumn" width="100px">
+                    <TextView text="Postal Code" design="STANDARD" />
+                    <TextView text="{/postalCode}" />
+                  </TableColumn>
+                  <TableColumn id="addressCountryColumn" width="100px">
+                    <TextView text="Country" design="STANDARD" />
+                    <TextView text="{/country}" />
+                  </TableColumn>
+                  <TableColumn id="addressDefaultColumn" width="80px">
+                    <TextView text="Default" design="STANDARD" />
+                    <CheckBox id="defaultAddress" checked="{/isDefault}" editable="false" />
+                  </TableColumn>
+                  <TableColumn id="addressActionsColumn" width="160px">
+                    <TextView text="Actions" design="STANDARD" />
+                    <FlowLayout>
+                      <Button text="Edit" onAction="onEditAddress" />
+                      <Button text="Delete" onAction="onDeleteAddress" />
+                      <Button text="Set as Default" onAction="onSetDefaultAddress" />
+                    </FlowLayout>
+                  </TableColumn>
+                </Table>
+              </RowLayout>
+              <ButtonRow id="addressButtonsRow">
+                <Button text="Add New Address" onAction="onAddNewAddress" />
+              </ButtonRow>
+            </tab>
+            
+            <tab text="Payment Methods">
+              <RowLayout id="paymentMethodsTableRow">
+                <Table id="paymentMethodsTable" selectionMode="SINGLE" width="100%">
+                  <TableColumn id="paymentTypeColumn" width="120px">
+                    <TextView text="Type" design="STANDARD" />
+                    <TextView text="{/type}" />
+                  </TableColumn>
+                  <TableColumn id="paymentDescriptionColumn">
+                    <TextView text="Description" design="STANDARD" />
+                    <TextView text="{/description}" />
+                  </TableColumn>
+                  <TableColumn id="paymentDefaultColumn" width="80px">
+                    <TextView text="Default" design="STANDARD" />
+                    <CheckBox id="defaultPayment" checked="{/isDefault}" editable="false" />
+                  </TableColumn>
+                  <TableColumn id="paymentActionsColumn" width="160px">
+                    <TextView text="Actions" design="STANDARD" />
+                    <FlowLayout>
+                      <Button text="Edit" onAction="onEditPaymentMethod" />
+                      <Button text="Delete" onAction="onDeletePaymentMethod" />
+                      <Button text="Set as Default" onAction="onSetDefaultPaymentMethod" />
+                    </FlowLayout>
+                  </TableColumn>
+                </Table>
+              </RowLayout>
+              <ButtonRow id="paymentMethodButtonsRow">
+                <Button text="Add New Payment Method" onAction="onAddNewPaymentMethod" />
+              </ButtonRow>
+            </tab>
+            
+            <tab text="Preferences">
+              <FormContainer id="preferencesForm" title="Communication Preferences">
+                <FormElement label="Order Confirmation:">
+                  <CheckBox id="orderConfirmationEmail" checked="{/preferences/orderConfirmationEmail}" text="Receive email for order confirmations" />
+                </FormElement>
+                <FormElement label="Shipment Updates:">
+                  <CheckBox id="shipmentUpdatesEmail" checked="{/preferences/shipmentUpdatesEmail}" text="Receive email for shipment updates" />
+                </FormElement>
+                <FormElement label="Delivery Notifications:">
+                  <CheckBox id="deliveryNotificationsEmail" checked="{/preferences/deliveryNotificationsEmail}" text="Receive email for delivery notifications" />
+                </FormElement>
+                <FormElement label="Invoice Notifications:">
+                  <CheckBox id="invoiceNotificationsEmail" checked="{/preferences/invoiceNotificationsEmail}" text="Receive email for invoice notifications" />
+                </FormElement>
+                <FormElement label="Marketing Communications:">
+                  <CheckBox id="marketingEmail" checked="{/preferences/marketingEmail}" text="Receive marketing emails" />
+                </FormElement>
+                <FormElement label="Product Updates:">
+                  <CheckBox id="productUpdatesEmail" checked="{/preferences/productUpdatesEmail}" text="Receive email for product updates" />
+                </FormElement>
+              </FormContainer>
+              
+              <FormContainer id="displayPreferencesForm" title="Display Preferences">
+                <FormElement label="Default Currency:">
+                  <DropDownByKey id="defaultCurrency" selectedKey="{/preferences/defaultCurrency}">
+                    <item key="USD" text="USD ($)" />
+                    <item key="EUR" text="EUR (€)" />
+                    <item key="GBP" text="GBP (£)" />
+                    <item key="JPY" text="JPY (¥)" />
+                  </DropDownByKey>
+                </FormElement>
+                <FormElement label="Default Language:">
+                  <DropDownByKey id="defaultLanguage" selectedKey="{/preferences/defaultLanguage}">
+                    <item key="EN" text="English" />
+                    <item key="DE" text="German" />
+                    <item key="FR" text="French" />
+                    <item key="ES" text="Spanish" />
+                    <item key="JA" text="Japanese" />
+                  </DropDownByKey>
+                </FormElement>
+                <FormElement label="Date Format:">
+                  <DropDownByKey id="dateFormat" selectedKey="{/preferences/dateFormat}">
+                    <item key="MM/DD/YYYY" text="MM/DD/YYYY" />
+                    <item key="DD/MM/YYYY" text="DD/MM/YYYY" />
+                    <item key="YYYY-MM-DD" text="YYYY-MM-DD" />
+                  </DropDownByKey>
+                </FormElement>
+                <FormElement label="Number Format:">
+                  <DropDownByKey id="numberFormat" selectedKey="{/preferences/numberFormat}">
+                    <item key="1,234.56" text="1,234.56" />
+                    <item key="1.234,56" text="1.234,56" />
+                  </DropDownByKey>
+                </FormElement>
+                <FormElement label="Items per Page:">
+                  <DropDownByKey id="itemsPerPage" selectedKey="{/preferences/itemsPerPage}">
+                    <item key="10" text="10" />
+                    <item key="25" text="25" />
+                    <item key="50" text="50" />
+                    <item key="100" text="100" />
+                  </DropDownByKey>
+                </FormElement>
+              </FormContainer>
+              <ButtonRow id="preferencesButtonsRow">
+                <Button text="Save Preferences" design="EMPHASIZED" onAction="onSavePreferences" />
+                <Button text="Reset to Default" onAction="onResetPreferences" />
+              </ButtonRow>
+            </tab>
+            
+            <tab text="Support">
+              <FormContainer id="supportForm" title="Contact Support">
+                <FormElement label="Subject:">
+                  <InputField id="supportSubject" value="{/support/subject}" />
+                </FormElement>
+                <FormElement label="Category:">
+                  <DropDownByKey id="supportCategory" selectedKey="{/support/category}">
+                    <item key="ORDER" text="Order Inquiry" />
+                    <item key="PRODUCT" text="Product Inquiry" />
+                    <item key="TECHNICAL" text="Technical Issue" />
+                    <item key="BILLING" text="Billing Question" />
+                    <item key="RETURNS" text="Returns & Refunds" />
+                    <item key="OTHER" text="Other" />
+                  </DropDownByKey>
+                </FormElement>
+                <FormElement label="Message:">
+                  <TextArea id="supportMessage" value="{/support/message}" rows="5" />
+                </FormElement>
+                <FormElement label="Order Number (if applicable):">
+                  <InputField id="supportOrderNumber" value="{/support/orderNumber}" />
+                </FormElement>
+                <FormElement label="Attachments:">
+                  <FileUpload id="supportAttachments" uploadUrl="/api/support/attachments" />
+                </FormElement>
+                <FormElement label="Contact Method:">
+                  <RadioButtonGroupByIndex id="contactMethod" selectedIndex="{/support/contactMethodIndex}">
+                    <item text="Email" />
+                    <item text="Phone" />
+                    <item text="Either" />
+                  </RadioButtonGroupByIndex>
+                </FormElement>
+              </FormContainer>
+              <ButtonRow id="supportButtonsRow">
+                <Button text="Submit" design="EMPHASIZED" onAction="onSubmitSupportRequest" />
+                <Button text="Clear Form" onAction="onClearSupportForm" />
+              </ButtonRow>
+              
+              <RowLayout id="supportTicketsRow">
+                <Label text="My Support Tickets" design="H3" />
+                <Table id="supportTicketsTable" selectionMode="SINGLE" width="100%">
+                  <TableColumn id="ticketIdColumn" width="120px">
+                    <TextView text="Ticket ID" design="STANDARD" />
+                    <TextView text="{/ticketId}" />
+                  </TableColumn>
+                  <TableColumn id="ticketSubjectColumn">
+                    <TextView text="Subject" design="STANDARD" />
+                    <TextView text="{/subject}" />
+                  </TableColumn>
+                  <TableColumn id="ticketCategoryColumn" width="120px">
+                    <TextView text="Category" design="STANDARD" />
+                    <TextView text="{/category}" />
+                  </TableColumn>
+                  <TableColumn id="ticketStatusColumn" width="100px">
+                    <TextView text="Status" design="STANDARD" />
+                    <StatusIndicator value="{/statusCode}" text="{/status}" />
+                  </TableColumn>
+                  <TableColumn id="ticketCreatedColumn" width="120px">
+                    <TextView text="Created On" design="STANDARD" />
+                    <TextView text="{/createdOn}" />
+                  </TableColumn>
+                  <TableColumn id="ticketLastUpdateColumn" width="120px">
+                    <TextView text="Last Update" design="STANDARD" />
+                    <TextView text="{/lastUpdate}" />
+                  </TableColumn>
+                  <TableColumn id="ticketActionsColumn" width="120px">
+                    <TextView text="Actions" design="STANDARD" />
+                    <Button text="View Details" onAction="onViewTicketDetails" />
+                  </TableColumn>
+                </Table>
+              </RowLayout>
+            </tab>
+          </TabStrip>
+        </tab>
+      </TabStrip>
+      
+      <FooterBar id="portalFooter" text="© 2025 Company Name. All rights reserved." subtext="Customer Service: 1-800-555-1234 | support@company.com">
+        <Button text="Help" onAction="onHelp" />
+        <Button text="Terms & Conditions" onAction="onTermsAndConditions" />
+        <Button text="Privacy Policy" onAction="onPrivacyPolicy" />
+        <Button text="Contact Us" onAction="onContactUs" />
+        <Button text="Logout" onAction="onLogout" />
+      </FooterBar>
+    </FlowLayout>
+  </View>
+  <Controller name="CustomerOrderPortalController">
+    <Method name="onCreateNewOrder" />
+    <Method name="onViewOrderStatus" />
+    <Method name="onViewCatalog" />
+    <Method name="onContactSupport" />
+    <Method name="onDownloadPriceList" />
+    <Method name="onViewOrderDetails" />
+    <Method name="onTrackOrder" />
+    <Method name="onAddToCart" />
+    <Method name="onViewProductDetails" />
+    <Method name="onApplyOrderFilters" />
+    <Method name="onResetOrderFilters" />
+    <Method name="onOrderSelected" />
+    <Method name="onViewFullOrderDetails" />
+    <Method name="onTrackFullOrder" />
+    <Method name="onCancelOrder" />
+    <Method name="onTrackShipment" />
+    <Method name="onViewInvoice" />
+    <Method name="onViewDocument" />
+    <Method name="onDownloadDocument" />
+    <Method name="onPrintDocument" />
+    <Method name="onApplyCatalogFilters" />
+    <Method name="onResetCatalogFilters" />
+    <Method name="onAdvancedProductSearch" />
+    <Method name="onProductSelected" />
+    <Method name="onAddProductToCart" />
+    <Method name="onAddToFavorites" />
+    <Method name="onViewAlternativeDetails" />
+    <Method name="onAddAlternativeToCart" />
+    <Method name="onViewProductDocument" />
+    <Method name="onDownloadProductDocument" />
+    <Method name="onAddSelectedProductToCart" />
+    <Method name="onUpdateCartQuantity" />
+    <Method name="onRemoveCartItem" />
+    <Method name="onViewCartItemDetails" />
+    <Method name="onContinueShopping" />
+    <Method name="onUpdateCart" />
+    <Method name="onClearCart" />
+    <Method name="onProceedToCheckout" />
+    <Method name="onSaveProfileChanges" />
+    <Method name="onChangePassword" />
+    <Method name="onEditAddress" />
+    <Method name="onDeleteAddress" />
+    <Method name="onSetDefaultAddress" />
+    <Method name="onAddNewAddress" />
+    <Method name="onEditPaymentMethod" />
+    <Method name="onDeletePaymentMethod" />
+    <Method name="onSetDefaultPaymentMethod" />
+    <Method name="onAddNewPaymentMethod" />
+    <Method name="onSavePreferences" />
+    <Method name="onResetPreferences" />
+    <Method name="onSubmitSupportRequest" />
+    <Method name="onClearSupportForm" />
+    <Method name="onViewTicketDetails" />
+    <Method name="onHelp" />
+    <Method name="onTermsAndConditions" />
+    <Method name="onPrivacyPolicy" />
+    <Method name="onContactUs" />
+    <Method name="onLogout" />
+    <Method name="wdDoInit" />
+  </Controller>
+</WebDynpro>
